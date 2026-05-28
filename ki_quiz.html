@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI-Grundwissen · Einstiegscheck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy: #0F2340;
+    --blue: #1B4F8A;
+    --gold: #B8922A;
+    --gold-l: #FBF3DC;
+    --green: #1E6B3C;
+    --green-l: #D6EDE1;
+    --red: #8B1A1A;
+    --red-l: #F7DEDE;
+    --amber: #8B5E0A;
+    --amber-l: #FDF3DC;
+    --gray: #4A4A4A;
+    --gray-l: #F2F4F7;
+    --white: #FFFFFF;
+    --border: rgba(15,35,64,0.12);
+    --shadow: 0 2px 20px rgba(15,35,64,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F0F3F8;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    color: var(--navy);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blue);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .score-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 12px;
+    background: var(--navy);
+    color: var(--gold);
+    border-radius: 20px;
+  }
+
+  .prog-wrap { margin-bottom: 1.5rem; }
+  .prog-track {
+    height: 5px;
+    background: rgba(15,35,64,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .prog-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 5px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .level-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: rgba(27,79,138,0.08);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .timer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .timer-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(15,35,64,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .timer-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 2px;
+    transition: width .1s linear;
+  }
+  .timer-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gray);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: .4rem;
+  }
+
+  .q-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--navy);
+    margin-bottom: .5rem;
+  }
+
+  .q-hint {
+    font-size: 13px;
+    color: var(--gray);
+    font-style: italic;
+    margin-bottom: 1.25rem;
+    padding-left: .75rem;
+    border-left: 2px solid var(--gold);
+  }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-top: 1.25rem; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: .875rem 1rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #FAFBFD;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--navy);
+    text-align: left;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color .15s, background .15s, transform .1s;
+    line-height: 1.45;
+  }
+  .opt:hover:not(:disabled) {
+    border-color: var(--blue);
+    background: rgba(27,79,138,0.04);
+    transform: translateY(-1px);
+  }
+  .opt:disabled { cursor: default; transform: none; }
+
+  .opt.correct {
+    border-color: var(--green);
+    background: var(--green-l);
+    color: var(--green);
+  }
+  .opt.wrong {
+    border-color: var(--red);
+    background: var(--red-l);
+    color: var(--red);
+  }
+  .opt.show {
+    border-color: var(--green);
+    background: var(--green-l);
+    color: var(--green);
+  }
+
+  .opt-letter {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background: rgba(15,35,64,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    color: var(--navy);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .fb {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    animation: fadeIn .25s ease;
+  }
+  .fb.ok { background: var(--green-l); color: var(--green); border: 1px solid rgba(30,107,60,.2); }
+  .fb.no { background: var(--red-l); color: var(--red); border: 1px solid rgba(139,26,26,.2); }
+  .fb.time { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(139,94,10,.2); }
+
+  .fb strong { display: block; margin-bottom: .3rem; font-size: 14px; }
+
+  .btn-next {
+    margin-top: 1rem;
+    padding: .6rem 1.2rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .12s, border-color .12s;
+  }
+  .btn-next:hover { background: var(--gray-l); border-color: rgba(15,35,64,.25); }
+
+  .btn-start {
+    padding: .75rem 1.75rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity .15s, transform .1s;
+    letter-spacing: .02em;
+  }
+  .btn-start:hover { opacity: .88; transform: translateY(-1px); }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 1.5rem 0;
+  }
+  .ig {
+    background: var(--gray-l);
+    border-radius: 12px;
+    padding: .75rem .5rem;
+    text-align: center;
+  }
+  .ig-icon { font-size: 20px; margin-bottom: 4px; }
+  .ig-label { font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .05em; }
+
+  .lv-intro {
+    background: var(--gray-l);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid var(--gold);
+  }
+  .lv-intro h3 { font-size: 17px; font-weight: 600; color: var(--navy); margin-bottom: .4rem; }
+  .lv-intro p { font-size: 13.5px; color: var(--gray); line-height: 1.65; }
+
+  .res-big { font-size: 52px; font-weight: 600; color: var(--navy); line-height: 1; }
+  .res-max { font-size: 16px; color: var(--gray); }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 1.25rem 0;
+  }
+  .rg {
+    background: var(--gray-l);
+    border-radius: 12px;
+    padding: .75rem .5rem;
+    text-align: center;
+  }
+  .rg-v { font-size: 20px; font-weight: 600; color: var(--navy); }
+  .rg-l { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+  .title-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin: .75rem 0 1rem;
+  }
+
+  .res-desc {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .scale-row {
+    display: flex;
+    gap: 4px;
+    margin: 1rem 0 .4rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .sr-seg {
+    flex: 1;
+    padding: 6px 0;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-restart {
+    padding: .6rem 1.2rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-restart:hover { background: var(--gray-l); }
+
+  @keyframes fadeIn { from { opacity:0; transform: translateY(4px); } to { opacity:1; transform: none; } }
+
+  .animate-in { animation: fadeIn .3s ease; }
+
+  @media (max-width: 480px) {
+    body { padding: 1rem .75rem; }
+    .card { padding: 1.5rem; border-radius: 16px; }
+    .q-text { font-size: 16px; }
+    .intro-grid { grid-template-columns: repeat(2,1fr); }
+    .res-grid { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <div class="logo">KI · Grundwissen</div>
+    <div class="score-pill" id="score-pill">0 Punkte</div>
+  </div>
+  <div class="prog-wrap" id="prog-wrap" style="display:none">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-meta">
+      <span id="prog-label">Frage 1</span>
+      <span id="prog-pct">0%</span>
+    </div>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const TIMER=18, PQ=10, BONUS=3, BONUS_T=7;
+
+const LEVELS=[
+  {n:1,title:"Token",desc:"Bevor wir über Kosten, Prompts oder Systeme reden: Was ist die Grundeinheit, mit der KI arbeitet – und warum ist das für jeden relevant, der KI nutzt?",icon:"🧩",qs:[
+    {q:"Was ist ein Token?",hint:"Die Grundeinheit, in der Sprachmodelle Text verarbeiten.",opts:["Eine digitale Währung für KI-Dienste","Ein Sicherheitsschlüssel für API-Zugänge","Die kleinste Verarbeitungseinheit – Wortteile, Silben oder Zeichen","Eine Maßeinheit für Rechengeschwindigkeit"],a:2,fb:"Ein Token entspricht ungefähr 0,75 Wörtern im Deutschen – oder etwa 4 Zeichen. Das Wort 'Implementierung' kann 3–4 Token sein. Kosten entstehen pro verarbeitetem Token."},
+    {q:"Wie viele Token hat ungefähr eine DIN-A4-Seite mit normalem Fließtext?",hint:"Faustregel: ca. 400–500 Wörter auf einer Seite.",opts:["ca. 100–200 Token","ca. 500–700 Token","ca. 2.000–3.000 Token","ca. 10.000 Token"],a:1,fb:"Eine A4-Seite mit ca. 400–500 Wörtern erzeugt ungefähr 500–700 Token. Ein 10-seitiges Dokument = bereits 5.000–7.000 Token – nur für die Eingabe. Dazu kommt noch die Antwort."},
+    {q:"Sie geben eine A4-Seite ein und bekommen eine halbseitige Antwort. Wie viele Token werden ungefähr insgesamt verbraucht?",hint:"Eingabe + Ausgabe werden beide berechnet.",opts:["Nur die Ausgabe zählt – Eingaben sind kostenlos","Ca. 500–700 (nur die Eingabe)","Ca. 750–1.050 (Eingabe + Ausgabe zusammen)","Ca. 5.000, weil das Modell intern mehrfach verarbeitet"],a:2,fb:"Beide Seiten kosten: Input-Tokens + Output-Tokens. A4-Eingabe ≈ 600 Token + halbe Seite Antwort ≈ 300 Token = ca. 900 Token gesamt. Output-Tokens sind bei den meisten Modellen teurer als Input-Tokens."},
+    {q:"Was passiert, wenn ein Dokument länger ist als das Kontextfenster des Modells?",hint:"Das Kontextfenster ist das 'Kurzzeitgedächtnis' des Modells.",opts:["Das Modell verarbeitet alles – es hat kein Limit","Das Modell verarbeitet nur einen Teil und vergisst den Rest","Das Modell gibt eine Fehlermeldung und stoppt","Das Modell teilt das Dokument automatisch in perfekte Hälften"],a:1,fb:"Jedes Modell hat ein maximales Kontextfenster. Was nicht hineinpasst, wird nicht verarbeitet. Bei langen Dokumenten muss man gezielt vorgehen: aufteilen, zusammenfassen oder nur relevante Abschnitte einspeisen."}
+  ]},
+  {n:2,title:"Kosten",desc:"Token-Preise, Modellunterschiede und warum 'kostenlos testen' nicht dasselbe ist wie 'produktiv betreiben'.",icon:"💶",qs:[
+    {q:"KI-Modelle werden typischerweise nach welchem Prinzip abgerechnet?",hint:"Nicht pauschal – sondern nutzungsabhängig.",opts:["Pauschale Monatsgebühr, unabhängig vom Verbrauch","Pro verarbeitetes Token – getrennt nach Eingabe und Ausgabe","Pro Anfrage, unabhängig von der Länge","Nach Rechenzeit in Sekunden"],a:1,fb:"Die meisten professionellen KI-APIs rechnen pro Token ab – Input und Output separat. Output-Tokens sind oft 3–5x teurer als Input-Tokens. Claude Sonnet kostet z. B. 3 USD pro Million Input-Tokens und 15 USD pro Million Output-Tokens."},
+    {q:"Was ist der Unterschied zwischen einem kleinen Modell (z. B. Haiku) und einem großen Modell (z. B. Sonnet)?",hint:"Es geht nicht nur um Preis – sondern auch um Fähigkeiten.",opts:["Kleine Modelle sind langsamer, aber genauer","Große Modelle sind billiger, weil effizienter","Kleine Modelle sind günstiger und schneller, aber weniger fähig bei komplexen Aufgaben","Es gibt keinen qualitativen Unterschied – nur den Preis"],a:2,fb:"Haiku: sehr günstig, sehr schnell – ideal für einfache Klassifikation und kurze Zusammenfassungen. Sonnet: teurer, aber deutlich besser bei Analyse und komplexen Texten. Die richtige Modellwahl ist ein wesentlicher Kostenhebel."},
+    {q:"Ein Unternehmen testet KI kostenlos über eine Web-Oberfläche. Warum sagt das wenig über die späteren Produktivkosten aus?",opts:["Weil die Web-Oberfläche immer teurer ist als die API","Weil in der Produktivnutzung viel mehr Token verarbeitet werden – durch Systemkontext, Protokollierung und Wiederholungen","Weil KI im Produktivbetrieb langsamer wird","Weil Web-Tests immer mit dem besten Modell laufen"],a:1,fb:"Ein manueller Chat-Test verbraucht vielleicht 500 Token. Ein produktives System lädt zusätzlich: System-Prompt, Gesprächshistorie, Kontext-Dokumente, Logs. Real entstehen 5.000–20.000 Token pro Vorgang – das ist der entscheidende Unterschied."}
+  ]},
+  {n:3,title:"Prompts",desc:"Derselbe Inhalt, zwei Formulierungen – völlig verschiedene Ergebnisse. Warum Prompts Handwerk sind, nicht Glück.",icon:"✍️",qs:[
+    {q:"Was ist der Hauptunterschied zwischen einem guten und einem schlechten Prompt?",opts:["Gute Prompts sind länger – je mehr Text, desto besser die Antwort","Gute Prompts geben Kontext, Ziel, Format und Grenzen vor – schlechte lassen das offen","Gute Prompts verwenden immer Fachbegriffe","Es gibt keinen messbaren Unterschied – die KI versteht immer, was gemeint ist"],a:1,fb:"Ein guter Prompt beantwortet der KI vier Fragen: Was soll ich tun? Für wen? In welchem Format? Was soll ich NICHT tun? Fehlt eine davon, füllt die KI die Lücke selbst – mit ihrer eigenen Annahme, die oft nicht Ihrer entspricht."},
+    {q:"Zwei Personen geben denselben Satz ein. Warum können sie unterschiedliche Ergebnisse bekommen?",hint:"KI-Modelle sind nicht deterministisch – und Kontext ist alles.",opts:["Das ist unmöglich – gleiche Eingabe ergibt immer gleiche Ausgabe","Weil der restliche Kontext unterschiedlich ist: Systemanweisung, Gesprächshistorie, Modellversion, Temperature","Weil KI zufällig Antworten aus einer Datenbank wählt","Weil längere Benutzernamen bessere Antworten erzeugen"],a:1,fb:"Gleicher Prompt ≠ gleiches Ergebnis. Kontext macht den Unterschied: Welches Modell? Welcher System-Prompt davor? Welche Temperature-Einstellung? Zwei identische Sätze in zwei verschiedenen Systemen können völlig verschiedene Antworten erzeugen."},
+    {q:"Welcher Prompt erzeugt wahrscheinlich die bessere E-Mail-Zusammenfassung?",opts:["'Fasse die E-Mail zusammen.'","'Fasse die E-Mail in maximal 3 Stichpunkten zusammen. Nenne: offene Aufgaben, genannte Fristen und den Ton (freundlich / neutral / dringend).'","'Lies die E-Mail und sag mir alles, was wichtig ist.'","Alle drei sind gleichwertig – KI erkennt immer, was gemeint ist."],a:1,fb:"Prompt 2 gewinnt, weil er Format (3 Stichpunkte), Inhalt (Aufgaben, Fristen, Ton) und Ausgabestruktur vorgibt. Die KI muss nicht raten, was 'wichtig' bedeutet. Je präziser die Erwartung, desto reproduzierbarer das Ergebnis."},
+    {q:"Was ist ein System-Prompt?",opts:["Der erste Satz, den der Nutzer eingibt","Eine versteckte Anweisung des Anbieters","Eine dauerhafte Verhaltensanweisung, die vor jeder Nutzereingabe geladen wird und den Rahmen für alle Antworten setzt","Ein Protokoll aller bisherigen Eingaben"],a:2,fb:"Der System-Prompt ist die 'Persönlichkeit und Grenze' der KI. Er wird bei jeder Anfrage mitgeladen, bevor der Nutzer etwas eingibt. Er legt fest, was die KI darf, wie sie antwortet und wann sie eskaliert."}
+  ]},
+  {n:4,title:"KI-Logik",desc:"Was KI kann, was sie nicht kann – und warum sie manchmal überzeugend falsch liegt.",icon:"🧠",qs:[
+    {q:"Was bedeutet es, wenn ein KI-Modell 'halluziniert'?",opts:["Das Modell verarbeitet Bilder statt Text","Das Modell erzeugt sachlich falsche, aber überzeugend formulierte Informationen","Das Modell antwortet zu langsam","Das Modell wiederholt denselben Satz mehrfach"],a:1,fb:"Halluzination ist eines der bekanntesten KI-Risiken: Das Modell erfindet Fakten, Zitate, Gesetze oder Zahlen – und klingt dabei völlig sicher. Deshalb ist menschliche Prüfung kein optionales Feature, sondern strukturelle Notwendigkeit."},
+    {q:"Warum ist ein KI-Modell kein Suchmotor?",opts:["Weil es keine Websites lesen kann","Weil es keine aktuellen Informationen aus dem Internet holt, sondern aus einem trainierten Modell antwortet, das einen Wissensstichtag hat","Weil es langsamer ist als Google","Weil es nur auf Ja/Nein-Fragen antwortet"],a:1,fb:"Ein Sprachmodell wurde auf Daten bis zu einem bestimmten Datum trainiert. Es weiß nichts über Ereignisse danach – es sei denn, Sie geben diese Information in den Prompt. Aktuelle Gesetzesänderungen oder neue Preise müssen selbst eingebracht werden."},
+    {q:"Was ist 'Temperature' bei einem KI-Modell?",hint:"Ein Einstellungsparameter, der das Verhalten steuert.",opts:["Die physikalische Wärme des Servers","Die Reaktionsgeschwindigkeit des Modells","Ein Parameter zwischen 0 und 1, der steuert wie kreativ/zufällig (hoch) oder präzise/vorhersehbar (niedrig) die Antworten sind","Die maximale Länge einer Antwort"],a:2,fb:"Temperature 0: fast immer dieselbe, vorhersehbare Antwort – ideal für strukturierte Aufgaben wie Analyse oder Klassifikation. Temperature 1: mehr Variation, kreativer – ideal für Kommunikationsentwürfe oder Content."}
+  ]}
+];
+
+const TITLES=[
+  {min:0,max:19,label:"KI-Neuling",desc:"Guter Startpunkt. Das Gespräch beginnt von Anfang an – ohne Vorwissen vorauszusetzen.",bg:"#F2F4F7",tc:"#4A4A4A"},
+  {min:20,max:39,label:"KI-Interessierter",desc:"Grundbegriffe sitzen – Details fehlen noch. Das Gespräch kann auf solidem Fundament aufbauen.",bg:"#FDF3DC",tc:"#8B5E0A"},
+  {min:40,max:59,label:"KI-Informierter",desc:"Solides Basiswissen. Sie verstehen die wichtigsten Konzepte – das Gespräch kann tiefer gehen.",bg:"#D6E8F7",tc:"#1B4F8A"},
+  {min:60,max:79,label:"KI-Praktiker",desc:"Starkes Ergebnis. Technische Zusammenhänge sind klar – wir können direkt in die Architektur einsteigen.",bg:"#D6EDE1",tc:"#1E6B3C"},
+  {min:80,max:999,label:"KI-Experte",desc:"Beeindruckend. Sie denken bereits in KI-Systemlogik – das Gespräch startet auf Expertenniveau.",bg:"#D6EDE1",tc:"#1E6B3C"}
+];
+
+let S={phase:"intro",li:0,qi:0,done:false,score:0,bonus:0,correct:0,ls:[0,0,0,0],tv:TIMER,ti:null,t0:0};
+
+const $=id=>document.getElementById(id);
+const app=()=>$("app");
+const totalQ=()=>LEVELS.reduce((s,l)=>s+l.qs.length,0);
+const answered=()=>{let n=0;for(let i=0;i<S.li;i++)n+=LEVELS[i].qs.length;return n+S.qi;};
+const maxScore=()=>totalQ()*(PQ+BONUS);
+const getTitle=s=>TITLES.find(t=>s>=t.min&&s<=t.max)||TITLES[0];
+
+function updateHUD(){
+  $("score-pill").textContent=S.score+" Punkte";
+  const a=answered(),t=totalQ(),pct=Math.round(a/t*100);
+  if(S.phase==="q"){
+    $("prog-wrap").style.display="block";
+    $("prog-fill").style.width=pct+"%";
+    $("prog-label").textContent="Frage "+(a+1)+" von "+t;
+    $("prog-pct").textContent=pct+"%";
+  } else {
+    $("prog-wrap").style.display="none";
+  }
+}
+
+function stopTimer(){if(S.ti){clearInterval(S.ti);S.ti=null;}}
+function startTimer(){
+  stopTimer();S.tv=TIMER;S.t0=Date.now();
+  S.ti=setInterval(()=>{
+    S.tv=Math.max(0,TIMER-Math.floor((Date.now()-S.t0)/1000));
+    const f=$("tf");if(f)f.style.width=(S.tv/TIMER*100)+"%";
+    const tv=$("tv");if(tv)tv.textContent=S.tv+"s";
+    if(S.tv<=0&&!S.done){S.done=true;stopTimer();reveal(-1);}
+  },100);
+}
+
+function render(){
+  updateHUD();
+  const el=app();
+  el.className="animate-in";
+  void el.offsetWidth;
+  if(S.phase==="intro")renderIntro();
+  else if(S.phase==="li")renderLI();
+  else if(S.phase==="q")renderQ();
+  else renderRes();
+}
+
+function renderIntro(){
+  app().innerHTML=`
+  <div class="card" style="text-align:center;padding:2.5rem 2rem">
+    <div style="font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;margin-bottom:.75rem">Einstiegscheck</div>
+    <h1 style="font-size:24px;font-weight:600;color:var(--navy);margin-bottom:.6rem">Was wissen Sie über KI?</h1>
+    <p style="font-size:14px;color:var(--gray);max-width:380px;margin:0 auto;line-height:1.7">
+      ${totalQ()} Fragen · 4 Level · ${TIMER} Sekunden pro Frage.<br>
+      Kein Vorwissen nötig. Das Ergebnis zeigt, wo wir im Gespräch sinnvoll ansetzen.
+    </p>
+    <div class="intro-grid">
+      ${LEVELS.map(l=>`<div class="ig">
+        <div class="ig-icon">${l.icon}</div>
+        <div class="ig-label">${l.title}</div>
+      </div>`).join("")}
+    </div>
+    <button class="btn-start" onclick="go('li')">Quiz starten →</button>
+    <p style="font-size:11px;color:var(--gray);margin-top:1rem">Bis zu ${maxScore()} Punkte erreichbar · Bonuspunkte bei schneller Antwort</p>
+  </div>`;
+}
+
+function renderLI(){
+  const lv=LEVELS[S.li];
+  app().innerHTML=`
+  <div style="text-align:center;font-size:12px;color:var(--gray);margin-bottom:1rem;font-weight:500;letter-spacing:.04em">— LEVEL ${lv.n} VON ${LEVELS.length} —</div>
+  <div class="lv-intro">
+    <h3>${lv.icon}  ${lv.title}</h3>
+    <p>${lv.desc}</p>
+  </div>
+  <div class="card" style="text-align:center;padding:1.5rem">
+    <p style="font-size:13px;color:var(--gray);margin-bottom:1rem">${lv.qs.length} Fragen · ${TIMER} Sekunden pro Frage</p>
+    <button class="btn-start" onclick="go('q')">Level ${lv.n} starten →</button>
+  </div>`;
+}
+
+function renderQ(){
+  const lv=LEVELS[S.li];
+  const q=lv.qs[S.qi];
+  app().innerHTML=`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <span class="level-chip">${lv.icon} Level ${lv.n} · ${lv.title}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="timer-val" id="tv">${TIMER}s</span>
+        <div class="timer-track" style="width:70px"><div class="timer-fill" id="tf" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="q-num">FRAGE ${S.qi+1} / ${lv.qs.length}</div>
+    <div class="q-text">${q.q}</div>
+    ${q.hint?`<div class="q-hint">${q.hint}</div>`:""}
+    <div class="opts" id="opts">
+      ${q.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="pick(${i})">
+        <span class="opt-letter">${String.fromCharCode(65+i)}</span>
+        <span>${o}</span>
+      </button>`).join("")}
+    </div>
+    <div id="fb"></div>
+    <div id="nb"></div>
+  </div>`;
+  if(!S.done)startTimer();
+}
+
+function reveal(chosen){
+  const q=LEVELS[S.li].qs[S.qi];
+  const ok=chosen===q.a;
+  const secs=(Date.now()-S.t0)/1000;
+  let pts=0,bon=0;
+  if(ok){pts=PQ;if(secs<=BONUS_T){bon=BONUS;}S.correct++;S.score+=pts+bon;S.bonus+=bon;S.ls[S.li]+=pts+bon;}
+  for(let i=0;i<q.opts.length;i++){
+    const b=$("o"+i);if(!b)continue;
+    b.disabled=true;
+    if(i===q.a)b.classList.add(chosen===-1?"show":"correct");
+    else if(i===chosen)b.classList.add("wrong");
+  }
+  const fb=$("fb");
+  if(fb){
+    const cls=chosen===-1?"time":ok?"ok":"no";
+    const hdr=chosen===-1?"Zeit abgelaufen ⏱":ok&&bon>0?`Richtig! +${pts} Punkte +${bon} Bonus ⚡`:ok?`Richtig! +${pts} Punkte ✓`:"Leider falsch.";
+    fb.className="fb "+cls;
+    fb.innerHTML=`<strong>${hdr}</strong>${q.fb}`;
+  }
+  const nb=$("nb");
+  if(nb){
+    const lastQ=S.qi===LEVELS[S.li].qs.length-1;
+    const lastL=S.li===LEVELS.length-1;
+    if(lastQ&&lastL)nb.innerHTML=`<button class="btn-next" onclick="go('res')">Ergebnis anzeigen →</button>`;
+    else if(lastQ)nb.innerHTML=`<button class="btn-next" onclick="nextLevel()">Level ${S.li+2} starten →</button>`;
+    else nb.innerHTML=`<button class="btn-next" onclick="nextQ()">Nächste Frage →</button>`;
+  }
+  updateHUD();
+}
+
+function pick(i){if(S.done)return;S.done=true;stopTimer();reveal(i);}
+function nextQ(){S.qi++;S.done=false;S.phase="q";render();}
+function nextLevel(){S.li++;S.qi=0;S.done=false;S.phase="li";render();}
+function go(p){S.phase=p;render();}
+
+function renderRes(){
+  const mx=maxScore();
+  const pct=Math.round(S.score/mx*100);
+  const t=getTitle(S.score);
+  app().innerHTML=`
+  <div class="card" style="text-align:center">
+    <div style="font-size:12px;color:var(--gray);margin-bottom:.5rem;letter-spacing:.05em;font-weight:600;text-transform:uppercase">Quiz abgeschlossen</div>
+    <div style="font-size:22px;font-weight:600;color:var(--navy)">${t.label}</div>
+    <div class="title-badge" style="background:${t.bg};color:${t.tc}">${pct}% erreicht</div>
+    <div style="margin:.25rem 0 .2rem">
+      <span class="res-big">${S.score}</span>
+      <span class="res-max"> / ${mx} Punkte</span>
+    </div>
+    <div class="res-grid" style="margin-top:1.25rem">
+      ${LEVELS.map((l,i)=>`<div class="rg"><div class="rg-v">${S.ls[i]}</div><div class="rg-l">Level ${l.n} · ${l.title}</div></div>`).join("")}
+      <div class="rg"><div class="rg-v">${S.correct}/${totalQ()}</div><div class="rg-l">Korrekt</div></div>
+      <div class="rg"><div class="rg-v">+${S.bonus}</div><div class="rg-l">Bonuspunkte</div></div>
+      <div class="rg"><div class="rg-v">${Math.round((Date.now()-0)/1000) > 0 ? pct+"%" : "–"}</div><div class="rg-l">Gesamtergebnis</div></div>
+    </div>
+    <p class="res-desc">${t.desc}</p>
+    <div class="scale-row">
+      ${TITLES.map(ti=>`<div class="sr-seg" style="background:${ti.bg};color:${ti.tc}">${ti.label}</div>`).join("")}
+    </div>
+    <div style="font-size:10px;color:var(--gray);display:flex;justify-content:space-between;margin-bottom:1.25rem;padding:0 2px">
+      <span>0</span><span>20</span><span>40</span><span>60</span><span>80+</span>
+    </div>
+    <button class="btn-restart" onclick="restart()">Nochmal versuchen</button>
+  </div>`;
+}
+
+function restart(){
+  stopTimer();
+  S={phase:"li",li:0,qi:0,done:false,score:0,bonus:0,correct:0,ls:[0,0,0,0],tv:TIMER,ti:null,t0:0};
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
